@@ -31,12 +31,18 @@ class InlineQueryResultCachedPhoto(InlineQueryResult):
     Alternatively, you can use input_message_content to send a message with the specified content instead of the photo.
     
     Parameters:
+        title (``str``):
+            Title for the result.
+        
         file_id (``str``):
-            Pass a file_id as string to send a media that exists on the Telegram servers.
+            Pass a file_id as string to send a photo that exists on the Telegram servers.
             
         id (``str``, *optional*):
             Unique identifier for this result, 1-64 bytes.
             Defaults to a randomly generated UUID4.
+            
+        description (``str``, *optional*):
+            Short description of the result.
             
         caption (``str``, *optional*):
             Caption of the photo to be sent, 0-1024 characters.
@@ -60,8 +66,10 @@ class InlineQueryResultCachedPhoto(InlineQueryResult):
 
     def __init__(
         self,
+        title: str,
         file_id: str,
         id: str = None,
+        description: str = None,
         caption: str = "",
         parse_mode: Optional[str] = object,
         caption_entities: List["types.MessageEntity"] = None,
@@ -71,6 +79,8 @@ class InlineQueryResultCachedPhoto(InlineQueryResult):
         super().__init__("photo", id, input_message_content, reply_markup)
 
         self.file_id = file_id
+        self.title = title
+        self.description = description
         self.caption = caption
         self.parse_mode = parse_mode
         self.caption_entities = caption_entities
@@ -87,6 +97,8 @@ class InlineQueryResultCachedPhoto(InlineQueryResult):
         return raw.types.InputBotInlineResultPhoto(
             id=self.id,
             type=self.type,
+            title=self.title,
+            description=self.description,
             photo=photo,
             send_message=(
                 await self.input_message_content.write(client, self.reply_markup)
